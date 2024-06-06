@@ -17,12 +17,7 @@ public class MessageConsumer {
         String groupId = "generalConsumers";
         long pollingTime = 100;
 
-        Properties configProps = new Properties();
-        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest"); // Reset to latest offset if no committed offset is found
+        Properties configProps = getConfigProps(groupId);
 
         try (KafkaConsumer<Integer, String> consumer = new KafkaConsumer<>(configProps)) {
             // Subscribe to topics
@@ -35,5 +30,15 @@ public class MessageConsumer {
                 }
             }
         }
+    }
+
+    private static Properties getConfigProps(String groupId) {
+        Properties configProps = new Properties();
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest"); // Reset to latest offset if no committed offset is found
+        return configProps;
     }
 }
