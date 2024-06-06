@@ -32,6 +32,12 @@ public class MessageConsumer {
         }
     }
 
+    /**
+     * Initializing Kafka Properties
+     *
+     * @param groupId : Specifies consumer group id
+     * @return properties object with all the essential configurations
+     */
     private static Properties getConfigProps(String groupId) {
         Properties configProps = new Properties();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");

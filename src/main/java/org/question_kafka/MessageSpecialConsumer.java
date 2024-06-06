@@ -24,9 +24,7 @@ public class MessageSpecialConsumer {
 
         Properties configProps = getProperties(groupId);
 
-        try (KafkaConsumer<Integer, String> consumer = new KafkaConsumer<>(configProps);
-             Jedis jedis = new Jedis()
-        ) {
+        try (KafkaConsumer<Integer, String> consumer = new KafkaConsumer<>(configProps); Jedis jedis = new Jedis()) {
             consumer.subscribe(List.of(topicName));
             System.out.println("Listening for messages...");
             while (true) {
@@ -47,6 +45,12 @@ public class MessageSpecialConsumer {
         }
     }
 
+    /**
+     * Initializing Kafka Properties
+     *
+     * @param groupId : Specifies consumer group id
+     * @return properties object with all the essential configurations
+     */
     private static Properties getProperties(String groupId) {
         Properties configProps = new Properties();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
@@ -57,6 +61,11 @@ public class MessageSpecialConsumer {
         return configProps;
     }
 
+    /**
+     * @param input : Input string needed to be hashed
+     * @return Hashed string
+     * @throws NoSuchAlgorithmException : Raises if the specified algorithm (MD5) does not exist
+     */
     private static String doMD5HashCalculation(String input) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(input.getBytes());
