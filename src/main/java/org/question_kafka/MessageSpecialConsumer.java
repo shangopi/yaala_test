@@ -17,23 +17,6 @@ import java.util.Properties;
 
 public class MessageSpecialConsumer {
 
-    private static String doMD5HashCalculation(String input) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(input.getBytes());
-        byte[] resultByte = md.digest();
-        // Convert the byte array to a hexadecimal string
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : resultByte) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
-
-    }
-
     public static void main(String[] args) {
         final String topicName = "userInput"; // Kafka topic name
         String groupId = "generalConsumers";
@@ -72,5 +55,22 @@ public class MessageSpecialConsumer {
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest"); // Reset to latest offset if no committed offset is found
         return configProps;
+    }
+
+    private static String doMD5HashCalculation(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(input.getBytes());
+        byte[] resultByte = md.digest();
+        // Convert the byte array to a hexadecimal string
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : resultByte) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+
     }
 }
