@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 
-public class MessageSpecialConsumer {
+public class MessageFaultTolerantConsumer {
 
     public static void main(String[] args) {
         final String topicName = "userInput"; // Kafka topic name
@@ -30,11 +30,13 @@ public class MessageSpecialConsumer {
             while (true) {
                 ConsumerRecords<Integer, String> consumerRecords = consumer.poll(Duration.ofMillis(pollingTime));
                 for (ConsumerRecord<Integer, String> consumerRecord : consumerRecords) {
+                    System.out.printf("Received message: key: %d, value: %s %n", consumerRecord.key(), consumerRecord.value());
                     Thread.sleep(20000);
                     String hashedValue = doMD5HashCalculation(consumerRecord.value());
-                    jedis.set(String.valueOf(consumerRecord.key()), hashedValue);
-                    System.out.printf("Received message: key: %d, value: %s, Hashed Value: %s %n", consumerRecord.key(), consumerRecord.value(), hashedValue);
+                    jedis.set(String.valueOf(consumerRecord.key()) , hashedValue);
+                    System.out.printf("Stored message: key: %d, Hashed Value: %s %n", consumerRecord.key(), hashedValue);
                 }
+                consumer.commitSync();
             }
         } catch (NoSuchAlgorithmException e) {
             System.out.println("NoSuchAlgorithmException occurred");
@@ -57,6 +59,7 @@ public class MessageSpecialConsumer {
         configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class.getName());
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest"); // Reset to latest offset if no committed offset is found
         return configProps;
     }
